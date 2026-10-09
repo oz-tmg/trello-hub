@@ -1,0 +1,18 @@
+# Private context is linked from the separate context repository.
+/PROJECT_CONTEXT.md
+/TRELLO_WORKFLOW.md
+/workflow.yaml
+.env
+.env.*
+!.env.example
+
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+.coverage
+htmlcov/
+.DS_Store

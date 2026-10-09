@@ -1,0 +1,11 @@
+# Planned consumer contract. YAML loading is not implemented yet.
+# Copy to workflow.yaml (gitignored); replace the board and prefix for your repo.
+board: YOUR_BOARD_SHORTLINK
+prefix: ws
+lists:
+  doing: "🔧 Doing (WIP ≤ 3)"
+  blocked: "⏸️ Blocked / Waiting on Alex"
+  review: "👀 Review / Read"
+  done_prefix: "✅ Done — "
+experiment_label: "T: Experiment"
+allow_done_from_push: true
