@@ -7,7 +7,8 @@ If unavailable, stop work that depends on private contracts and report the gap.
 
 The local folder is `trello-hub`; the design calls the project
 `savepoint-workflow` and the Python distribution/import `spwf`. Preserve `spwf`
-until the owner changes that decision. No GitHub remote is established here.
+until the owner changes that decision. The GitHub remote is
+`https://github.com/oz-tmg/trello-hub`.
 
 Keep this file and `CLAUDE.md` identical. Standing instructions go here;
 decisions, history and integration contracts go in the private context file.
