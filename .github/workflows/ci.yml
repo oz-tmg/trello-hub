@@ -21,7 +21,7 @@ jobs:
           cache: pip
       - name: Install package and test dependencies
         run: python -m pip install -e '.[dev]'
-      - name: Test transition guards
+      - name: Test configuration, events and transition guards
         run: python -m pytest
       - name: Check package entrypoints
         run: |

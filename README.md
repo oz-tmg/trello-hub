@@ -3,8 +3,9 @@
 Scaffold for `savepoint-workflow`, a small, board-agnostic Python package named
 `spwf`. GitHub events will update Trello cards using consumer configuration.
 
-This is an initial local scaffold. It performs no Trello requests and does not
-yet synchronize GitHub events. The project currently lives in `trello-hub`;
+This package currently validates configuration and plans transitions offline.
+It performs no Trello requests and does not yet synchronize GitHub events.
+The project currently lives in `trello-hub`;
 the GitHub repository is [oz-tmg/trello-hub](https://github.com/oz-tmg/trello-hub).
 
 ## Local development
@@ -46,25 +47,62 @@ private documents; contract-dependent development requires those documents.
 - Table-driven policy tests and development CI.
 - A consumer configuration template in `workflow.example.yaml`; supply your board
   identifier before use.
+- Strict Pydantic configuration with safe YAML loading, unknown/duplicate-key
+  rejection and sanitized errors. PyYAML handles YAML syntax.
+- GitHub push, PR and completed CI failure parsing, including branch/body/trailer
+  bindings, squash merges and a pure helper for PR precedence within a batch.
 
-The policy expects resolved card facts. It does not yet map events to requested
-states, load YAML, resolve lists or enforce cross-event ordering.
+The policy expects resolved card facts. It does not yet resolve live list IDs or
+enforce ordering across separate workflow runs.
+
+## Offline interfaces and event rules
+
+```python
+from spwf.config import load_config
+from spwf.github import parse_event
+
+config = load_config("workflow.yaml")
+requests = parse_event("push", event_payload, config)
+```
+
+`event_payload` is a decoded GitHub event JSON object. These functions do no
+network I/O; requests must pass `spwf.state.plan_transition` with current card
+facts before any execution is implemented.
+
+- Only the configured consumer prefix binds a branch. A branch's creation push
+  requests Doing; later branch-only pushes do nothing.
+- Exact `Trello: <shortlink> <keyword>` lines supply explicit commands. A branch
+  and trailer naming different cards cause an error. On unbound branches,
+  trailers may name multiple cards. The latest commit command per card wins.
+- `done` on a push is accepted only on `main` with `allow_done_from_push: true`.
+  A disallowed explicit Done produces no fallback Doing move.
+- PR opened requests Review; PR merged into `main` requests Done. Body trailers
+  supply bindings; the PR lifecycle determines the requested state. Closing
+  without merging and merges into other branches do nothing.
+- Completed CI failures request Blocked. The transition guard preserves cards
+  already in Review. Success, cancellation and skipped checks cause no move.
+- `coalesce_requests` gives PR events precedence over pushes for the same card
+  and SHA in a supplied batch. A future runner must obtain PR context across
+  runs; a standalone push payload cannot establish that precedence.
+
+`config.target_list(state)` returns a configured list name. For Done it requires
+an explicit `month_label` suffix; the board's exact month naming must be verified
+before adding automatic date formatting. `lists.reference` is optional and
+defaults to `📌 Program & Gates`.
 
 ## Remaining Milestone 1 work
 
-1. Validate/load `workflow.yaml`; determine the YAML parser dependency and exact
-   current-month list naming. Resolve list names at runtime.
-2. Parse card bindings from branch names, commit trailers and PR bodies; cover
-   first pushes, main-only completion, squash merges and PR precedence.
-3. Implement the Trello client with mocked response tests, safe errors and
+1. Confirm the exact current-month list naming and resolve list IDs at runtime.
+2. Implement the Trello client with mocked response tests, safe errors and
    idempotent writes. A read-only live smoke test requires an API key/token.
-4. Add `trello_sync.py` and reusable `trello-sync.yml` with dry-run mode,
-   SHA/run-URL comments and the consumer failure policy.
-5. Owner provisions `TRELLO_KEY` and `TRELLO_TOKEN` and chooses secret scope. Wire the first consumer and validate a real push.
+3. Add `trello_sync.py` and reusable `trello-sync.yml` with dry-run mode,
+   SHA/run-URL comments, cross-run PR precedence and the consumer failure policy.
+4. Owner provisions `TRELLO_KEY` and `TRELLO_TOKEN` and chooses secret scope.
+   Wire the first consumer and validate a real push.
 
-The supplied workflow example describes the planned contract; it is not loaded
-by the CLI yet. Actual list names must match the consumer's board exactly.
-No versioned reusable workflow is available yet.
+The CLI currently exposes help and version only; configuration and event parsing
+are Python interfaces. Actual list names must match the consumer's board exactly.
+No reusable workflow or `v1` release is available yet.
 
 Prefect hooks, calendars and the agent-facing server remain deferred until the
 earlier milestones and two weeks of real use are complete.
