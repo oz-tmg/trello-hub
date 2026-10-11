@@ -1,5 +1,7 @@
 """Validate consumer configuration without disclosing its contents in errors."""
 
+from datetime import datetime
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from pathlib import Path
 from typing import Literal
 
@@ -45,6 +47,30 @@ class WorkflowConfig(_StrictModel):
     lists: Lists
     experiment_label: str = Field(default="T: Experiment", min_length=1)
     allow_done_from_push: bool = True
+    timezone: str = "America/Vancouver"
+    done_month_format: Literal["%Y-%m", "%B", "%B %Y"] | None = None
+
+    @field_validator("timezone")
+    @classmethod
+    def valid_timezone(cls, value: str) -> str:
+        try:
+            ZoneInfo(value)
+        except (ZoneInfoNotFoundError, ValueError):
+            raise ValueError("invalid timezone") from None
+        return value
+
+    def current_month(self, now: datetime | None = None) -> str:
+        if self.done_month_format is None:
+            raise ConfigError("Configure done_month_format after verifying the board's Done list")
+        current = now or datetime.now(ZoneInfo(self.timezone))
+        if current.tzinfo is None:
+            raise ConfigError("Current time must include a timezone")
+        current = current.astimezone(ZoneInfo(self.timezone))
+        # English names independent of the worker's locale.
+        month = ("January February March April May June July August September October November December".split())[current.month - 1]
+        return {"%Y-%m": f"{current.year:04d}-{current.month:02d}",
+                "%B": month, "%B %Y": f"{month} {current.year}"}[self.done_month_format]
+
 
     @field_validator("experiment_label")
     @classmethod

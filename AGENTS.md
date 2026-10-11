@@ -29,6 +29,10 @@ For meaningful changes, append a dated update there using its update protocol.
   development CI must still fail on broken tests.
 - Keep private context, personal board details, research data and methodology
   out of tracked files. Do not force-add ignored files.
+- Dry-run must remain entirely offline; fixture state is forbidden in live mode.
+- Run only the pinned automation package in reusable workflows, never consumer PR code.
+- Query current same-repository PR state before live push moves. Skip fork PRs.
+- Trello writes are not automatically retried; report partial move/comment failures.
 - Stop and report blockers. Live validation requires credentials; publishing,
   pushing and owner decisions remain human checkpoints in the project workflow.
 

@@ -10,3 +10,7 @@ lists:
   reference: "📌 Program & Gates"
 experiment_label: "T: Experiment"
 allow_done_from_push: true
+timezone: America/Vancouver
+# REQUIRED for ordinary Done moves. Confirm the actual board suffix first.
+# Supported: '%Y-%m', '%B', '%B %Y'. No default is guessed.
+# done_month_format: '%Y-%m'

@@ -1,0 +1,9 @@
+{
+  "repository": {"full_name": "example/consumer"},
+  "ref": "refs/heads/ws/ZzYy9876-demo",
+  "created": true,
+  "deleted": false,
+  "after": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "head_commit": {"id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "message": "Start demo"},
+  "commits": [{"id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "message": "Start demo"}]
+}

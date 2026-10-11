@@ -1,0 +1,13 @@
+# Synthetic board for the offline demo only.
+board: AbCd1234
+prefix: ws
+lists:
+  doing: Doing
+  blocked: Blocked
+  review: Review
+  done_prefix: 'Done — '
+  reference: Program & Gates
+experiment_label: 'T: Experiment'
+allow_done_from_push: true
+timezone: America/Vancouver
+done_month_format: '%Y-%m'

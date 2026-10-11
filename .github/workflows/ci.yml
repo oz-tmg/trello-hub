@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
   test:
@@ -27,3 +28,19 @@ jobs:
         run: |
           spwf --version
           python -m spwf --help
+          spwf sync --config examples/workflow.yaml --event-name push --event-path examples/push.json --snapshot examples/snapshot.json --dry-run
+
+  reusable-preview:
+    uses: ./.github/workflows/trello-sync.yml
+    with:
+      runner-ref: ${{ github.sha }}
+      dry-run: true
+      configuration: |
+        board: AbCd1234
+        prefix: ws
+        lists:
+          doing: Doing
+          blocked: Blocked
+          review: Review
+          done_prefix: 'Done — '
+          reference: Program & Gates

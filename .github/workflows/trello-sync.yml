@@ -1,0 +1,105 @@
+name: Trello sync
+
+on:
+  workflow_call:
+    inputs:
+      runner-ref:
+        description: Full commit SHA of the reviewed trello-hub package (match the workflow pin)
+        required: true
+        type: string
+      configuration:
+        description: Consumer workflow YAML, usually from vars.SPWF_CONFIG
+        required: true
+        type: string
+      dry-run:
+        description: Offline preview; no GitHub API or Trello calls
+        default: true
+        type: boolean
+      snapshot:
+        description: Optional JSON card snapshot for guarded offline previews
+        default: ''
+        type: string
+    secrets:
+      TRELLO_KEY:
+        required: false
+      TRELLO_TOKEN:
+        required: false
+
+permissions:
+  contents: read
+  pull-requests: read
+
+# Serialize all events in this consumer repo. Do not cancel an in-flight move.
+concurrency:
+  group: spwf-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    # No pull_request_target, fork PR secrets, or privileged workflow_run execution.
+    if: >-
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' &&
+       github.event.pull_request.head.repo.full_name == github.repository) ||
+      (github.event_name == 'workflow_run' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    continue-on-error: true
+    steps:
+      - name: Validate immutable runner pin
+        env:
+          RUNNER_REF: ${{ inputs.runner-ref }}
+        run: |
+          python - <<'PY'
+          import os, re
+          if not re.fullmatch(r'[0-9a-f]{40}', os.environ['RUNNER_REF']):
+              raise SystemExit('runner-ref must be a full commit SHA')
+          PY
+      - uses: actions/checkout@v4
+        with:
+          repository: oz-tmg/trello-hub
+          ref: ${{ inputs.runner-ref }}
+          path: automation
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install reviewed automation package
+        run: python -m pip install ./automation
+      - name: Prepare configuration and optional snapshot
+        env:
+          CONFIGURATION: ${{ inputs.configuration }}
+          SNAPSHOT: ${{ inputs.snapshot }}
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          root = Path(os.environ['RUNNER_TEMP'])
+          (root / 'spwf.yaml').write_text(os.environ['CONFIGURATION'])
+          if os.environ['SNAPSHOT']:
+              (root / 'spwf-snapshot.json').write_text(os.environ['SNAPSHOT'])
+          PY
+      - name: Synchronize or preview
+        env:
+          DRY_RUN: ${{ inputs.dry-run }}
+          HAS_SNAPSHOT: ${{ inputs.snapshot != '' }}
+          TRELLO_KEY: ${{ secrets.TRELLO_KEY }}
+          TRELLO_TOKEN: ${{ secrets.TRELLO_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from spwf.cli import main
+          root = Path(os.environ['RUNNER_TEMP'])
+          args = ['sync', '--config', str(root / 'spwf.yaml'), '--soft-fail',
+                  '--run-url', f"{os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}"]
+          if os.environ['DRY_RUN'] == 'true':
+              args.append('--dry-run')
+              if os.environ['HAS_SNAPSHOT'] == 'true':
+                  args += ['--snapshot', str(root / 'spwf-snapshot.json')]
+          else:
+              args.append('--live')
+          raise SystemExit(main(args))
+          PY

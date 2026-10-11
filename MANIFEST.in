@@ -1,0 +1,4 @@
+include trello_sync.py workflow.example.yaml
+recursive-include docs *.md
+recursive-include examples *.json *.yaml *.yml
+recursive-include tests *.py *.md

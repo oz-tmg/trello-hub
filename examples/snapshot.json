@@ -1,0 +1,15 @@
+{
+  "board": {"id": "111111111111111111111111", "shortLink": "AbCd1234", "closed": false},
+  "lists": [
+    {"id": "222222222222222222222222", "name": "Doing", "closed": false},
+    {"id": "333333333333333333333333", "name": "Blocked", "closed": false},
+    {"id": "444444444444444444444444", "name": "Review", "closed": false},
+    {"id": "555555555555555555555555", "name": "Program & Gates", "closed": false},
+    {"id": "666666666666666666666666", "name": "Done — 2026-10", "closed": false}
+  ],
+  "cards": [{
+    "id": "777777777777777777777777", "shortLink": "ZzYy9876",
+    "idBoard": "111111111111111111111111", "idList": "888888888888888888888888",
+    "closed": false, "labels": [], "due": null, "dueComplete": false
+  }]
+}

@@ -1,0 +1,26 @@
+# Replace BOTH REPLACE_WITH_FULL_SHA values with the SAME reviewed 40-character
+# trello-hub commit. Save as .github/workflows/trello.yml in the consumer repo.
+name: Trello
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    types: [opened, closed]
+  # Optional: replace CI with the actual consumer CI workflow name.
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+permissions:
+  contents: read
+  pull-requests: read
+jobs:
+  trello:
+    uses: oz-tmg/trello-hub/.github/workflows/trello-sync.yml@REPLACE_WITH_FULL_SHA
+    with:
+      runner-ref: REPLACE_WITH_FULL_SHA
+      configuration: ${{ vars.SPWF_CONFIG }}
+      dry-run: true  # Change only after the read-only smoke and preview review.
+      snapshot: ${{ vars.SPWF_SNAPSHOT }}  # Optional, sanitized card facts for offline preview.
+    secrets:
+      TRELLO_KEY: ${{ secrets.TRELLO_KEY }}
+      TRELLO_TOKEN: ${{ secrets.TRELLO_TOKEN }}
