@@ -1,5 +1,6 @@
-# Replace BOTH REPLACE_WITH_FULL_SHA values with the SAME reviewed 40-character
-# trello-hub commit. Save as .github/workflows/trello.yml in the consumer repo.
+# Pinned to the CI-verified offline integration baseline (51838ad).
+# Save as .github/workflows/trello.yml in the consumer repo.
+# When upgrading, update BOTH workflow and runner-ref to the same reviewed SHA.
 name: Trello
 on:
   push:
@@ -15,9 +16,9 @@ permissions:
   pull-requests: read
 jobs:
   trello:
-    uses: oz-tmg/trello-hub/.github/workflows/trello-sync.yml@REPLACE_WITH_FULL_SHA
+    uses: oz-tmg/trello-hub/.github/workflows/trello-sync.yml@51838ad34e06c340ed8a3a493af3f885a82b4007
     with:
-      runner-ref: REPLACE_WITH_FULL_SHA
+      runner-ref: 51838ad34e06c340ed8a3a493af3f885a82b4007
       configuration: ${{ vars.SPWF_CONFIG }}
       dry-run: true  # Change only after the read-only smoke and preview review.
       snapshot: ${{ vars.SPWF_SNAPSHOT }}  # Optional, sanitized card facts for offline preview.

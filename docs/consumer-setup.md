@@ -6,10 +6,13 @@ workflow has not yet been validated against the live board.
 
 ## 1. Review and pin the automation
 
-Use a reviewed trello-hub commit that contains `.github/workflows/trello-sync.yml`.
 Copy `examples/consumer-workflow.yml` into the consumer repository as
-`.github/workflows/trello.yml`. Replace **both** `REPLACE_WITH_FULL_SHA` values
-with the same full commit SHA. There is no `v1` tag yet.
+`.github/workflows/trello.yml`. Both workflow and package are already pinned to
+`51838ad34e06c340ed8a3a493af3f885a82b4007`. This baseline passed 141 tests on
+Python 3.11 and 3.13 and every step of the reusable offline preview in
+[CI run 38180577127](https://github.com/oz-tmg/trello-hub/actions/runs/38180577127).
+Live Trello behavior remains unverified. On upgrades, update both pins to the
+same reviewed full SHA. There is no `v1` tag yet.
 
 Do not use `pull_request_target`. The workflow skips fork PRs; no consumer code
 is checked out. Keep the required `contents: read` and `pull-requests: read`
