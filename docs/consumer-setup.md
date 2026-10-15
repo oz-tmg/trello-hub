@@ -31,6 +31,7 @@ month format only after checking the current Done list:
 | `2026-10` | `'%Y-%m'` |
 | `October` | `'%B'` |
 | `October 2026` | `'%B %Y'` |
+| `Oct 2026` | `'%b %Y'` |
 
 The package does not guess this or create a missing monthly list. Set
 `timezone: America/Vancouver` (or the board's actual timezone). When archiving

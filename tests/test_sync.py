@@ -120,3 +120,15 @@ def test_done_cannot_alias_another_stage(facts):
     config = config.model_copy(update={'lists': config.lists.model_copy(update={'doing': 'Done — 2026-10'})})
     with pytest.raises(TrelloError, match='another workflow stage'):
         plan(request(State.DONE), card, board, lists, config, now=NOW)
+
+
+def test_abbreviated_month_format_validates_and_resolves_board_list(facts):
+    from spwf.config import WorkflowConfig
+    card, board, lists, config = facts
+    data = config.model_dump()
+    data['done_month_format'] = '%b %Y'
+    config = WorkflowConfig.model_validate(data)
+    lists[-1] = lists[-1].model_copy(update={'name': 'Done — Oct 2026'})
+    boundary = datetime(2026, 11, 1, 1, 0, tzinfo=timezone.utc)
+    result = plan(request(State.DONE), card, board, lists, config, now=boundary)
+    assert result.target_name == 'Done — Oct 2026'

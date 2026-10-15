@@ -55,7 +55,7 @@ Follow [the consumer setup guide](docs/consumer-setup.md). It includes the
 read-only smoke check, first live move and required GitHub permissions.
 
 `workflow.example.yaml` lists the configuration fields. `done_month_format`
-must match the board's actual current-month list (`%Y-%m`, `%B`, or `%B %Y`). It
+must match the board's actual current-month list (`%Y-%m`, `%B`, `%B %Y`, or `%b %Y`). It
 has no default: missing configuration blocks ordinary Done moves, while
 Experiment redirection still works. Dates use the configured timezone (default
 America/Vancouver). Lists are resolved by exact name and cached per run; this

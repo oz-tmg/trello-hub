@@ -48,7 +48,7 @@ class WorkflowConfig(_StrictModel):
     experiment_label: str = Field(default="T: Experiment", min_length=1)
     allow_done_from_push: bool = True
     timezone: str = "America/Vancouver"
-    done_month_format: Literal["%Y-%m", "%B", "%B %Y"] | None = None
+    done_month_format: Literal["%Y-%m", "%B", "%B %Y", "%b %Y"] | None = None
 
     @field_validator("timezone")
     @classmethod
@@ -69,7 +69,8 @@ class WorkflowConfig(_StrictModel):
         # English names independent of the worker's locale.
         month = ("January February March April May June July August September October November December".split())[current.month - 1]
         return {"%Y-%m": f"{current.year:04d}-{current.month:02d}",
-                "%B": month, "%B %Y": f"{month} {current.year}"}[self.done_month_format]
+                "%B": month, "%B %Y": f"{month} {current.year}",
+                "%b %Y": f"{month[:3]} {current.year}"}[self.done_month_format]
 
 
     @field_validator("experiment_label")
