@@ -1,4 +1,4 @@
-# Pinned to the CI-verified offline integration baseline (51838ad).
+# Pinned to the CI-verified and live-validated integration baseline (bf2945d).
 # Save as .github/workflows/trello.yml in the consumer repo.
 # When upgrading, update BOTH workflow and runner-ref to the same reviewed SHA.
 name: Trello
@@ -16,9 +16,9 @@ permissions:
   pull-requests: read
 jobs:
   trello:
-    uses: oz-tmg/trello-hub/.github/workflows/trello-sync.yml@51838ad34e06c340ed8a3a493af3f885a82b4007
+    uses: oz-tmg/trello-hub/.github/workflows/trello-sync.yml@bf2945de2290aa2688898f01849ead86fbc9932e
     with:
-      runner-ref: 51838ad34e06c340ed8a3a493af3f885a82b4007
+      runner-ref: bf2945de2290aa2688898f01849ead86fbc9932e
       configuration: ${{ vars.SPWF_CONFIG }}
       dry-run: true  # Change only after the read-only smoke and preview review.
       snapshot: ${{ vars.SPWF_SNAPSHOT }}  # Optional, sanitized card facts for offline preview.

@@ -1,17 +1,19 @@
 # First consumer setup and validation
 
 This guide prepares the first consumer (the `ws` prefix is supported). It does
-not activate a consumer or require sharing credentials in a chat. The reusable
-workflow has not yet been validated against the live board.
+not activate a new consumer or require sharing credentials in a chat. The first
+consumer passed dedicated-card hosted live validation on 2026-10-15; each new
+consumer still needs its own configuration and activation checks.
 
 ## 1. Review and pin the automation
 
 Copy `examples/consumer-workflow.yml` into the consumer repository as
 `.github/workflows/trello.yml`. Both workflow and package are already pinned to
-`51838ad34e06c340ed8a3a493af3f885a82b4007`. This baseline passed 141 tests on
+`bf2945de2290aa2688898f01849ead86fbc9932e`. This baseline passed 142 tests on
 Python 3.11 and 3.13 and every step of the reusable offline preview in
-[CI run 38180577127](https://github.com/oz-tmg/trello-hub/actions/runs/38180577127).
-Live Trello behavior remains unverified. On upgrades, update both pins to the
+[CI run 38691467084](https://github.com/oz-tmg/trello-hub/actions/runs/38691467084).
+Live validation verified Doing → Review, replay no-ops, current PR precedence,
+and Experiment completion stopping at Review. On upgrades, update both pins to the
 same reviewed full SHA. There is no `v1` tag yet.
 
 Do not use `pull_request_target`. The workflow skips fork PRs; no consumer code
@@ -96,7 +98,7 @@ Read logs for `status: error` even when the consumer check is green. A failed
 comment after a move requires inspection; do not assume a rerun will repair it.
 No rollback or automatic write retry is implemented.
 
-## Remaining activation work
+## Activation checklist for each consumer
 
 - Confirm real list names, the monthly Done convention and Trello responses.
 - Add configuration/secrets to the actual consumer and commit its caller.

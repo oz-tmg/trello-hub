@@ -4,10 +4,11 @@
 is [oz-tmg/trello-hub](https://github.com/oz-tmg/trello-hub); its original design
 name was `savepoint-workflow`. Python 3.11+; MIT licensed.
 
-The client, runner, reusable workflow and offline tests are implemented. **Live
-Trello validation and first-consumer activation are still pending.** No `v1`
-release has been created. Prefect hooks, calendar writers and an MCP server
-remain gated on later milestones.
+The client, runner, reusable workflow and offline tests are implemented.
+**WingspanAI is active; dedicated-card live validation passed on 2026-10-15.**
+The two-week ordinary-use milestone remains outstanding. No `v1` release has
+been created. Prefect hooks, calendar writers and an MCP server remain gated
+on later milestones.
 
 ## Try it without credentials
 
@@ -88,9 +89,11 @@ successful move is reported explicitly; rerunning an already-moved card is a
 strict no-op, so inspect the card and repair its audit comment manually. This
 also applies to ambiguous network failures where a write may have succeeded.
 
-Offline previews use synthetic fixtures, not recordings of the private board.
-Live response validation, fork behavior and the reusable caller's first run
-remain part of activation checks.
+Offline examples use synthetic fixtures, not recordings of the private board.
+The first consumer's hosted live checks verified moves and audit comments,
+replay no-ops, current PR precedence and Experiment completion protection.
+Dedicated validation events do not count toward the ordinary-use milestone.
+Fork behavior is covered offline; a hosted fork test remains outstanding.
 
 ## Development and private context
 
